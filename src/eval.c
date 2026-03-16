@@ -586,8 +586,10 @@ eval_cast(struct context *ctx,
 	const struct type *to = type_dealias(ctx, in->result),
 		*from = type_dealias(ctx, val.result);
 	// The STORAGE_ARRAY exception is to make sure we handle expandable
-	// arrays at this point.
-	if (to->storage == from->storage && to->storage != STORAGE_ARRAY) {
+	// arrays at this point. The STORAGE_TAGGED exception is to disallow
+	// subset casts.
+	if (to->storage == from->storage && to->storage != STORAGE_ARRAY
+			&& to->storage != STORAGE_TAGGED) {
 		out->literal = val.literal;
 		return true;
 	}
@@ -599,14 +601,15 @@ eval_cast(struct context *ctx,
 		out->result = to;
 		return true;
 	} else if (from->storage == STORAGE_TAGGED) {
-		out->literal = val.literal.tagged.value->literal;
-		return true;
+		if (to->storage == STORAGE_TAGGED
+				&& tagged_subset_compat(ctx, to, from)) {
+			out->literal = val.literal;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	// XXX: We should also be able to handle expressions which use
-	// symbols/identifiers
-
-	const struct type *subtype;
 	switch (to->storage) {
 	case STORAGE_POINTER:
 		if (from->storage == STORAGE_NULL) {
@@ -673,16 +676,12 @@ eval_cast(struct context *ctx,
 		}
 		return true;
 	case STORAGE_TAGGED:
-		subtype = tagged_select_subtype(ctx, to, val.result, true);
+		out->literal.tagged.tag =
+			tagged_select_subtype(ctx, to, val.result, true);
+		assert(out->literal.tagged.tag != NULL);
 		out->literal.tagged.value =
 			xcalloc(1, sizeof(struct expression));
-		if (subtype) {
-			out->literal.tagged.tag = subtype;
-			*out->literal.tagged.value = val;
-		} else {
-			out->literal.tagged.tag = from;
-			*out->literal.tagged.value = val;
-		}
+		*out->literal.tagged.value = val;
 		return true;
 	case STORAGE_NULL:
 	case STORAGE_ALIAS:

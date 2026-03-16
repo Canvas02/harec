@@ -119,7 +119,12 @@ fn casts() void = {
 	// compile time
 	static assert(4: (size | void) is size);
 	static assert(4: (size | void) as size == 4z);
-	static assert(4: (size | void): size == 4z);
+	compile(status::CHECK,
+		"def TEST = static assert(4: (size | void): size == 4z);"
+	)!;
+	compile(status::CHECK,
+		"let x = 4: (size | str | void): (size | str);"
+	)!;
 };
 
 fn membercast() void = {
@@ -157,6 +162,9 @@ fn membercast() void = {
 	};
 	assert(p.id == size_tag);
 	assert(p.data == 1337z);
+
+	static let x: (int | void) = 0;
+	static let y = 0: (int | void);
 };
 
 fn subsetcast() void = {
@@ -171,6 +179,8 @@ fn subsetcast() void = {
 	};
 	assert(p.tag == size_tag);
 	assert(p.z == 1337z);
+	static let z: (size | str | void) = 1: (size | str);
+	static let a = 1: (size | str): (size | str | void);
 	// superset -> subset
 	let x: (size | void | int) = 2z;
 	assert(x: (size | void) as size == 2);
