@@ -1442,13 +1442,15 @@ check_expr_binding(struct context *ctx,
 		if (abinding->type
 				&& abinding->type->storage == STORAGE_ARRAY
 				&& abinding->type->array.contextual) {
-			if (initializer->result->storage == STORAGE_INVALID) {
+			const struct type *initarray =
+				type_dealias(ctx, initializer->result);
+			if (initarray->storage == STORAGE_INVALID) {
 				// no-op
-			} else if (initializer->result->storage != STORAGE_ARRAY) {
+			} else if (initarray->storage != STORAGE_ARRAY) {
 				error(ctx, aexpr->loc, expr,
 					"Cannot infer array length from non-array type");
 				return;
-			} else if (initializer->result->array.members
+			} else if (initarray->array.members
 					!= type->array.members) {
 				char *inittype = gen_typename(initializer->result);
 				char *bindingtype = gen_typename(type);
@@ -1459,7 +1461,8 @@ check_expr_binding(struct context *ctx,
 				free(bindingtype);
 				return;
 			}
-			type = initializer->result;
+			type = initarray;
+			initializer = lower_implicit_cast(ctx, type, initializer);
 		}
 
 		if (expr->type == EXPR_DEFINE) {
@@ -4407,10 +4410,10 @@ resolve_global(struct context *ctx, struct scope_object *obj)
 			type = lower_flexible(ctx, init->result, NULL);
 		}
 		if (context) {
-			type = init->result;
-		} else {
-			init = lower_implicit_cast(ctx, type, init);
+			type = type_dealias(ctx, init->result);
 		}
+		init = lower_implicit_cast(ctx, type, init);
+
 		if (type->storage == STORAGE_NEVER) {
 			error(ctx, obj->idecl->decl.loc, NULL,
 				"Global cannot have type never");
