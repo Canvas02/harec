@@ -1,4 +1,3 @@
-use rt;
 use rt::{compile, status};
 
 fn tagged() void = {
