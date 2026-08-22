@@ -4402,6 +4402,14 @@ resolve_global(struct context *ctx, struct scope_object *obj)
 		init = xcalloc(1, sizeof(struct expression));
 		value = xcalloc(1, sizeof(struct expression));
 		check_expression(ctx, decl->init, init, type);
+		if (context) {
+			if (type_dealias(ctx, init->result)->storage != STORAGE_ARRAY
+					&& init->result->storage != STORAGE_INVALID) {
+				error(ctx, decl->init->loc, value,
+					"Cannot infer array length from non-array type");
+				goto end;
+			}
+		}
 		if (type) {
 			if (!type_is_assignable(ctx, type, init->result)) {
 				char *typename1 = gen_typename(init->result);
@@ -4414,11 +4422,11 @@ resolve_global(struct context *ctx, struct scope_object *obj)
 				type = &builtin_type_invalid;
 				goto end;
 			}
+			if (context) {
+				type = type_dealias(ctx, init->result);
+			}
 		} else {
 			type = lower_flexible(ctx, init->result, NULL);
-		}
-		if (context) {
-			type = type_dealias(ctx, init->result);
 		}
 		init = lower_implicit_cast(ctx, type, init);
 
