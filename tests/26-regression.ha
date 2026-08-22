@@ -323,4 +323,7 @@ export fn main() void = {
 
 	compile(status::CHECK, "let x = null: nullable *int as *int;")!;
 	compile(status::CHECK, "let x = null: nullable *int is null;")!;
+
+	let x = &(void: (int | void));
+	*x as void;
 };

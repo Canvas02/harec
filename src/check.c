@@ -3627,8 +3627,10 @@ check_expr_unarithm(struct context *ctx,
 			}
 			break;
 		case UN_DEREF:
-			operand_hint = type_store_lookup_pointer(
-				ctx, aexpr->loc, hint, false);
+			if (hint->size != 0) {
+				operand_hint = type_store_lookup_pointer(
+					ctx, aexpr->loc, hint, false);
+			}
 			break;
 		default:
 			break;
