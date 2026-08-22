@@ -4252,6 +4252,7 @@ resolve_const(struct context *ctx, struct scope_object *obj)
 	assert(!decl->symbol); // Invariant
 
 	const struct type *type = NULL;
+	bool context = false;
 	if (decl->type) {
 		type = type_store_lookup_atype(ctx, decl->type);
 	}
@@ -4260,6 +4261,15 @@ resolve_const(struct context *ctx, struct scope_object *obj)
 	check_expression(ctx, decl->init, init, type);
 	if (!decl->type) {
 		type = init->result;
+	} else if (decl->type->storage == STORAGE_ARRAY
+			&& decl->type->array.contextual) {
+		context = true;
+		if (type_dealias(ctx, init->result)->storage != STORAGE_ARRAY
+				&& init->result->storage != STORAGE_INVALID) {
+			error(ctx, decl->init->loc, obj->value,
+				"Cannot infer array length from non-array type");
+			goto end;
+		}
 	}
 	if (obj->idecl->decl.exported) {
 		struct location loc =
@@ -4278,12 +4288,10 @@ resolve_const(struct context *ctx, struct scope_object *obj)
 		goto end;
 	}
 	if (decl->type) {
-		if (decl->type->storage == STORAGE_ARRAY
-				&& decl->type->array.contextual) {
-			type = lower_flexible(ctx, init->result, NULL);
-		} else {
-			init = lower_implicit_cast(ctx, type, init);
+		if (context) {
+			type = type_dealias(ctx, init->result);
 		}
+		init = lower_implicit_cast(ctx, type, init);
 	}
 
 	if (!eval_expr(ctx, init, obj->value)) {
