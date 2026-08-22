@@ -164,7 +164,60 @@ fn eval_access() void = {
 	static assert([1, 2][0] == 1 && [1, 2][1] == 2);
 };
 
-fn reject() void = {
+let contextual_arr: [_]int = [1, 2, 3];
+static assert(len(contextual_arr) == 3);
+def CONTEXTUAL_ARR: [_]int = [1, 2, 3];
+static assert(len(CONTEXTUAL_ARR) == 3);
+
+fn contextual() void = {
+	let x: [_]int = [1, 2, 3];
+	static assert(len(x) == 3);
+	static let x: [_]int = [1, 2, 3];
+	static assert(len(x) == 3);
+	def X: [_]int = [1, 2, 3];
+	static assert(len(x) == 3);
+
+	// in contextual array bindings, the initializer's type is implicitly
+	// dealiased
+	let x: [_]int = [1, 2, 3]: array_alias;
+	let x = &x;
+	let x: *[3]int = x;
+	static let x: [_]int = [1, 2, 3]: array_alias;
+	let x = &x;
+	let x: *[3]int = x;
+	def X: [_]int = [1, 2, 3]: array_alias;
+	let x = &X;
+	let x: *[3]int = x;
+
+	// flexible types
+	let x: [_]u8 = [1, 2, 3];
+	let x: [_]f32 = [67.0];
+	let x: [_]u8 = ['x'];
+
+	let x: [_]int = [67], y = x;
+	static assert(len(y) == 1);
+
+	// context-defined arrays are only allowed in bindings
+	compile(status::PARSE, "type t = [_]int;")!;
+	compile(status::PARSE, "fn f(x: [_]int) void;")!;
+	compile(status::PARSE, "fn f() [_]int;")!;
+	compile(status::PARSE, "let x: ([_]int, int) = ([0], 0);")!;
+	compile(status::PARSE, "let x: [_][_]int = [[0]];")!;
+	compile(status::PARSE, "let x = [0]: [_]int;")!;
+
+	// must have initializer
+	compile(status::CHECK, "let x: [_]int;")!;
+	// initializer's type isn't an array (or an alias thereof)
+	compile(status::CHECK, "let x: [_]int = 67;")!;
+	compile(status::CHECK, "let x: [_]int = [67][..];")!;
+	compile(status::CHECK, "let x: [_]int = &[67];")!;
+	// array member types don't match
+	compile(status::CHECK, "let x: [_]int = [\"six seven\"];")!;
+	// array can't be unbounded
+	compile(status::CHECK, "let x: [*]int; fn f() void = { let x: [_]int = x; };")!;
+};
+
+fn misc_reject() void = {
 	// unbounded arrays of values of undefined size
 	compile(status::CHECK, "fn f() void = { let x = null: *[*][*]int; };")!;
 	compile(status::CHECK, "fn f() void = { let x = null: *[*]fn ()int; };")!;
@@ -199,5 +252,6 @@ export fn main() void = {
 	extype();
 	eval_array();
 	eval_access();
-	reject();
+	contextual();
+	misc_reject();
 };

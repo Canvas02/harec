@@ -87,6 +87,26 @@ fn compatibility() void = {
 		def TESTDEFINE = 256;
 		let x: u8 = TESTDEFINE;
 	", "-DTESTDEFINE=255")!;
+	compile(status::CHECK, "
+		def TESTDEFINE: [_]int = [1, 2];
+	", "-DTESTDEFINE:[_]int=[1,2,3]")!;
+	compile(status::SUCCESS, "
+		def TESTDEFINE: [3]int = [1, 2, 3];
+	", "-DTESTDEFINE:[_]int=[1,2,3]")!;
+	compile(status::SUCCESS, "
+		def TESTDEFINE: [_]int = [1, 2, 3];
+	", "-DTESTDEFINE:[3]int=[1,2,3]")!;
+};
+
+fn contextual() void = {
+	compile(status::SUCCESS, "
+		static assert(len(TESTDEFINE) == 3);
+		let x: [3]int = TESTDEFINE;
+	", "-DTESTDEFINE:[_]int=[1,2,3]")!;
+	compile(status::SUCCESS, "
+		static assert(len(TESTDEFINE) == 3);
+		let x: [3]int = TESTDEFINE;
+	", "-DTESTDEFINE:[_]int=[67...]:![3]int")!;
 };
 
 export fn main() void = {
@@ -94,4 +114,5 @@ export fn main() void = {
 	mandatory();
 	optional();
 	compatibility();
+	contextual();
 };
