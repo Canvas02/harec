@@ -255,6 +255,8 @@ parse_imports(struct lexer *lexer, struct ast_subunit *subunit)
 	}
 }
 
+static struct ast_type *parse_type(struct lexer *lexer);
+
 static void
 parse_parameter_list(struct lexer *lexer, struct ast_function_type *type)
 {
@@ -631,8 +633,8 @@ parse_tagged_or_tuple_type(struct lexer *lexer)
 	assert(0); // Unreachable
 }
 
-struct ast_type *
-parse_type(struct lexer *lexer)
+static struct ast_type *
+_parse_type(struct lexer *lexer, bool allow_contextual_array)
 {
 	struct token tok = {0};
 	try(lexer, T_CONST);
@@ -702,6 +704,8 @@ parse_type(struct lexer *lexer)
 			type->array.members = parse_type(lexer);
 			break;
 		case T_UNDERSCORE:
+			synassert_msg(allow_contextual_array,
+				"context-defined array not allowed here", &tok);
 			type->storage = STORAGE_ARRAY;
 			type->array.length = NULL;
 			type->array.contextual = true;
@@ -734,6 +738,18 @@ parse_type(struct lexer *lexer)
 	}
 
 	return type;
+}
+
+struct ast_type *
+parse_binding_type(struct lexer *lexer)
+{
+	return _parse_type(lexer, true);
+}
+
+static struct ast_type *
+parse_type(struct lexer *lexer)
+{
+	return _parse_type(lexer, false);
 }
 
 static struct ast_expression *
@@ -2193,7 +2209,7 @@ parse_binding_list(struct lexer *lexer, bool is_static)
 
 		switch (lex(lexer, &tok)) {
 		case T_COLON:
-			binding->type = parse_type(lexer);
+			binding->type = parse_binding_type(lexer);
 			want(lexer, T_EQUAL, &tok);
 			break;
 		case T_EQUAL:
@@ -2492,7 +2508,7 @@ parse_global_decl(struct lexer *lexer, enum lexical_token mode,
 	decl->ident = parse_identifier(lexer, NULL, NULL);
 	switch (lex(lexer, &tok)) {
 	case T_COLON:
-		decl->type = parse_type(lexer);
+		decl->type = parse_binding_type(lexer);
 		if (lex(lexer, &tok) != T_EQUAL) {
 			synassert(mode != T_DEF, &tok, T_EQUAL, T_EOF);
 			unlex(lexer, &tok);

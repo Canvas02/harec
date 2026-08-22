@@ -43,10 +43,6 @@ fn measurements() void = {
 	static assert(len(y) == 3);
 	static assert(len(&y) == 3);
 
-	assert(align([_]i8) == 1);
-	assert(align([_]i16) == 2);
-	assert(align([_]i32) == 4);
-	assert(align([_]i64) == 8);
 	assert(align([*]i8) == 1);
 	assert(align([*]i16) == 2);
 	assert(align([*]i32) == 4);

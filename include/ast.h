@@ -35,7 +35,7 @@ struct ast_imports {
 struct ast_array_type {
 	struct ast_expression *length; // NULL for unbounded arrays
 	struct ast_type *members;
-	bool contextual;
+	bool contextual; // only allowed in bindings
 };
 
 struct ast_slice_type {

@@ -748,8 +748,11 @@ type_init_from_atype(struct context *ctx,
 		type->align = obj->type->align;
 		break;
 	case STORAGE_ARRAY:
-		// XXX: contextual arrays are fuckin weird and idk whats goin on
-		// with them
+		// note: contextual arrays are treated the same as unbounded
+		// arrays here. this is fine, since contextual arrays aren't
+		// "real" types; they're only allowed in bindings, and will be
+		// immediately overwritten with the correct length bounded array
+		// type, so there's no need to handle them here.
 		if (atype->array.length == NULL) {
 			type->array.kind = ARR_UNBOUNDED;
 			type->array.length = SIZE_UNDEFINED;

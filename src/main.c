@@ -58,7 +58,7 @@ parse_define(const char *argv_0, const char *in, struct intern_table *itbl)
 	def->ident = parse_identifier(&lexer, NULL, NULL);
 	def->type = NULL;
 	if (lex(&lexer, &tok) == T_COLON) {
-		def->type = parse_type(&lexer);
+		def->type = parse_binding_type(&lexer);
 		lex(&lexer, &tok);
 	}
 
