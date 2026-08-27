@@ -2026,6 +2026,11 @@ check_expr_delete(struct context *ctx,
 			"delete must operate on a slice");
 		return;
 	}
+	if (otype->slice.members->size == SIZE_UNDEFINED) {
+		error(ctx, aexpr->delete.expr->loc, expr,
+			"Cannot delete from slice whose member type has undefined size");
+		// can recover from error
+	}
 }
 
 static void

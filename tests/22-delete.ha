@@ -1,4 +1,5 @@
 use rt;
+use rt::{compile, status};
 
 type my_slice = []int;
 
@@ -40,7 +41,14 @@ fn slice() void = {
 	free(x);
 };
 
+fn reject() void = {
+	// slice member type has undefined size
+	compile(status::CHECK, "fn f(x: []opaque) void = delete(x[0]);")!;
+	compile(status::CHECK, "fn f(x: []opaque) void = delete(x[..]);")!;
+};
+
 export fn main() void = {
 	index();
 	slice();
+	reject();
 };
