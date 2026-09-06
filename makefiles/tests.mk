@@ -29,7 +29,7 @@ $(HARECACHE)/rt.ssa: $(rt_ha) $(BINOUT)/harec
 rt_s = $(HARECACHE)/rt.s $(_rt_s)
 $(HARECACHE)/rt.o: $(rt_s)
 	@printf 'AS\t%s\n' '$@'
-	@$(AS) $(ASFLAGS) -o $@ $(rt_s)
+	@cat $(rt_s) | $(AS) $(ASFLAGS) -o $@ -
 
 tests = \
 	tests/00-literals \
@@ -75,7 +75,7 @@ tests = \
 
 tests/00-literals: $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_00_literals.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_00_literals.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_00_literals.o
 
 tests_00_literals_ha = tests/00-literals.ha
 $(HARECACHE)/tests_00_literals.ssa: $(tests_00_literals_ha) $(HARECACHE)/rt.td $(HARECACHE)/testmod.td $(BINOUT)/harec
@@ -86,7 +86,7 @@ $(HARECACHE)/tests_00_literals.ssa: $(tests_00_literals_ha) $(HARECACHE)/rt.td $
 
 tests/01-arrays: $(HARECACHE)/rt.o $(HARECACHE)/tests_01_arrays.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_01_arrays.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_01_arrays.o
 
 tests_01_arrays_ha = tests/01-arrays.ha
 $(HARECACHE)/tests_01_arrays.ssa: $(tests_01_arrays_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -97,7 +97,7 @@ $(HARECACHE)/tests_01_arrays.ssa: $(tests_01_arrays_ha) $(HARECACHE)/rt.td $(BIN
 
 tests/02-integers: $(HARECACHE)/rt.o $(HARECACHE)/tests_02_integers.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_02_integers.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_02_integers.o
 
 tests_02_integers_ha = tests/02-integers.ha
 $(HARECACHE)/tests_02_integers.ssa: $(tests_02_integers_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -108,7 +108,7 @@ $(HARECACHE)/tests_02_integers.ssa: $(tests_02_integers_ha) $(HARECACHE)/rt.td $
 
 tests/03-pointers: $(HARECACHE)/rt.o $(HARECACHE)/tests_03_pointers.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_03_pointers.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_03_pointers.o
 
 tests_03_pointers_ha = tests/03-pointers.ha
 $(HARECACHE)/tests_03_pointers.ssa: $(tests_03_pointers_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -119,7 +119,7 @@ $(HARECACHE)/tests_03_pointers.ssa: $(tests_03_pointers_ha) $(HARECACHE)/rt.td $
 
 tests/04-strings: $(HARECACHE)/rt.o $(HARECACHE)/tests_04_strings.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_04_strings.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_04_strings.o
 
 tests_04_strings_ha = tests/04-strings.ha
 $(HARECACHE)/tests_04_strings.ssa: $(tests_04_strings_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -130,7 +130,7 @@ $(HARECACHE)/tests_04_strings.ssa: $(tests_04_strings_ha) $(HARECACHE)/rt.td $(B
 
 tests/05-implicit-casts: $(HARECACHE)/rt.o $(HARECACHE)/tests_05_implicit_casts.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_05_implicit_casts.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_05_implicit_casts.o
 
 tests_05_implicit_casts_ha = tests/05-implicit-casts.ha
 $(HARECACHE)/tests_05_implicit_casts.ssa: $(tests_05_implicit_casts_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -141,7 +141,7 @@ $(HARECACHE)/tests_05_implicit_casts.ssa: $(tests_05_implicit_casts_ha) $(HARECA
 
 tests/06-structs: $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_06_structs.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_06_structs.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_06_structs.o
 
 tests_06_structs_ha = tests/06-structs.ha
 $(HARECACHE)/tests_06_structs.ssa: $(tests_06_structs_ha) $(HARECACHE)/rt.td $(HARECACHE)/testmod.td $(BINOUT)/harec
@@ -152,7 +152,7 @@ $(HARECACHE)/tests_06_structs.ssa: $(tests_06_structs_ha) $(HARECACHE)/rt.td $(H
 
 tests/07-aliases: $(HARECACHE)/rt.o $(HARECACHE)/tests_07_aliases.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_07_aliases.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_07_aliases.o
 
 tests_07_aliases_ha = tests/07-aliases.ha
 $(HARECACHE)/tests_07_aliases.ssa: $(tests_07_aliases_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -163,7 +163,7 @@ $(HARECACHE)/tests_07_aliases.ssa: $(tests_07_aliases_ha) $(HARECACHE)/rt.td $(B
 
 tests/08-slices: $(HARECACHE)/rt.o $(HARECACHE)/tests_08_slices.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_08_slices.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_08_slices.o
 
 tests_08_slices_ha = tests/08-slices.ha
 $(HARECACHE)/tests_08_slices.ssa: $(tests_08_slices_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -174,7 +174,7 @@ $(HARECACHE)/tests_08_slices.ssa: $(tests_08_slices_ha) $(HARECACHE)/rt.td $(BIN
 
 tests/09-funcs: $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_09_funcs.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_09_funcs.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_09_funcs.o
 
 tests_09_funcs_ha = tests/09-funcs.ha
 $(HARECACHE)/tests_09_funcs.ssa: $(tests_09_funcs_ha) $(HARECACHE)/rt.td $(HARECACHE)/testmod.td $(BINOUT)/harec
@@ -185,7 +185,7 @@ $(HARECACHE)/tests_09_funcs.ssa: $(tests_09_funcs_ha) $(HARECACHE)/rt.td $(HAREC
 
 tests/10-binarithms: $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_10_binarithms.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_10_binarithms.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_10_binarithms.o
 
 tests_10_binarithms_ha = tests/10-binarithms.ha
 $(HARECACHE)/tests_10_binarithms.ssa: $(tests_10_binarithms_ha) $(HARECACHE)/rt.td $(HARECACHE)/testmod.td $(BINOUT)/harec
@@ -196,7 +196,7 @@ $(HARECACHE)/tests_10_binarithms.ssa: $(tests_10_binarithms_ha) $(HARECACHE)/rt.
 
 tests/11-globals: $(HARECACHE)/rt.o $(HARECACHE)/tests_11_globals.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_11_globals.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_11_globals.o
 
 tests_11_globals_ha = tests/11-globals.ha
 $(HARECACHE)/tests_11_globals.ssa: $(tests_11_globals_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -207,7 +207,7 @@ $(HARECACHE)/tests_11_globals.ssa: $(tests_11_globals_ha) $(HARECACHE)/rt.td $(B
 
 tests/12-loops: $(HARECACHE)/rt.o $(HARECACHE)/tests_12_loops.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_12_loops.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_12_loops.o
 
 tests_12_loops_ha = tests/12-loops.ha
 $(HARECACHE)/tests_12_loops.ssa: $(tests_12_loops_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -218,7 +218,7 @@ $(HARECACHE)/tests_12_loops.ssa: $(tests_12_loops_ha) $(HARECACHE)/rt.td $(BINOU
 
 tests/13-tagged: $(HARECACHE)/rt.o $(HARECACHE)/tests_13_tagged.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_13_tagged.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_13_tagged.o
 
 tests_13_tagged_ha = tests/13-tagged.ha
 $(HARECACHE)/tests_13_tagged.ssa: $(tests_13_tagged_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -229,7 +229,7 @@ $(HARECACHE)/tests_13_tagged.ssa: $(tests_13_tagged_ha) $(HARECACHE)/rt.td $(BIN
 
 tests/14-switch: $(HARECACHE)/rt.o $(HARECACHE)/tests_14_switch.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_14_switch.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_14_switch.o
 
 tests_14_switch_ha = tests/14-switch.ha
 $(HARECACHE)/tests_14_switch.ssa: $(tests_14_switch_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -240,7 +240,7 @@ $(HARECACHE)/tests_14_switch.ssa: $(tests_14_switch_ha) $(HARECACHE)/rt.td $(BIN
 
 tests/15-enums: $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_15_enums.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_15_enums.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_15_enums.o
 
 tests_15_enums_ha = tests/15-enums.ha
 $(HARECACHE)/tests_15_enums.ssa: $(tests_15_enums_ha) $(HARECACHE)/rt.td $(HARECACHE)/testmod.td $(BINOUT)/harec
@@ -251,7 +251,7 @@ $(HARECACHE)/tests_15_enums.ssa: $(tests_15_enums_ha) $(HARECACHE)/rt.td $(HAREC
 
 tests/16-defer: $(HARECACHE)/rt.o $(HARECACHE)/tests_16_defer.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_16_defer.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_16_defer.o
 
 tests_16_defer_ha = tests/16-defer.ha
 $(HARECACHE)/tests_16_defer.ssa: $(tests_16_defer_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -262,7 +262,7 @@ $(HARECACHE)/tests_16_defer.ssa: $(tests_16_defer_ha) $(HARECACHE)/rt.td $(BINOU
 
 tests/17-alloc: $(HARECACHE)/rt.o $(HARECACHE)/tests_17_alloc.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_17_alloc.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_17_alloc.o
 
 tests_17_alloc_ha = tests/17-alloc.ha
 $(HARECACHE)/tests_17_alloc.ssa: $(tests_17_alloc_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -273,7 +273,7 @@ $(HARECACHE)/tests_17_alloc.ssa: $(tests_17_alloc_ha) $(HARECACHE)/rt.td $(BINOU
 
 tests/18-match: $(HARECACHE)/rt.o $(HARECACHE)/tests_18_match.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_18_match.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_18_match.o
 
 tests_18_match_ha = tests/18-match.ha
 $(HARECACHE)/tests_18_match.ssa: $(tests_18_match_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -284,7 +284,7 @@ $(HARECACHE)/tests_18_match.ssa: $(tests_18_match_ha) $(HARECACHE)/rt.td $(BINOU
 
 tests/19-append: $(HARECACHE)/rt.o $(HARECACHE)/tests_19_append.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_19_append.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_19_append.o
 
 tests_19_append_ha = tests/19-append.ha
 $(HARECACHE)/tests_19_append.ssa: $(tests_19_append_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -295,7 +295,7 @@ $(HARECACHE)/tests_19_append.ssa: $(tests_19_append_ha) $(HARECACHE)/rt.td $(BIN
 
 tests/20-if: $(HARECACHE)/rt.o $(HARECACHE)/tests_20_if.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_20_if.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_20_if.o
 
 tests_20_if_ha = tests/20-if.ha
 $(HARECACHE)/tests_20_if.ssa: $(tests_20_if_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -306,7 +306,7 @@ $(HARECACHE)/tests_20_if.ssa: $(tests_20_if_ha) $(HARECACHE)/rt.td $(BINOUT)/har
 
 tests/21-tuples: $(HARECACHE)/rt.o $(HARECACHE)/tests_21_tuples.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_21_tuples.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_21_tuples.o
 
 tests_21_tuples_ha = tests/21-tuples.ha
 $(HARECACHE)/tests_21_tuples.ssa: $(tests_21_tuples_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -317,7 +317,7 @@ $(HARECACHE)/tests_21_tuples.ssa: $(tests_21_tuples_ha) $(HARECACHE)/rt.td $(BIN
 
 tests/22-delete: $(HARECACHE)/rt.o $(HARECACHE)/tests_22_delete.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_22_delete.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_22_delete.o
 
 tests_22_delete_ha = tests/22-delete.ha
 $(HARECACHE)/tests_22_delete.ssa: $(tests_22_delete_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -328,7 +328,7 @@ $(HARECACHE)/tests_22_delete.ssa: $(tests_22_delete_ha) $(HARECACHE)/rt.td $(BIN
 
 tests/23-errors: $(HARECACHE)/rt.o $(HARECACHE)/tests_23_errors.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_23_errors.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_23_errors.o
 
 tests_23_errors_ha = tests/23-errors.ha
 $(HARECACHE)/tests_23_errors.ssa: $(tests_23_errors_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -339,7 +339,7 @@ $(HARECACHE)/tests_23_errors.ssa: $(tests_23_errors_ha) $(HARECACHE)/rt.td $(BIN
 
 tests/24-imports: $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_24_imports.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_24_imports.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_24_imports.o
 
 tests_24_imports_ha = tests/24-imports.ha
 $(HARECACHE)/tests_24_imports.ssa: $(tests_24_imports_ha) $(HARECACHE)/rt.td $(HARECACHE)/testmod.td $(BINOUT)/harec
@@ -350,7 +350,7 @@ $(HARECACHE)/tests_24_imports.ssa: $(tests_24_imports_ha) $(HARECACHE)/rt.td $(H
 
 tests/25-promotion: $(HARECACHE)/rt.o $(HARECACHE)/tests_25_promotion.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_25_promotion.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_25_promotion.o
 
 tests_25_promotion_ha = tests/25-promotion.ha
 $(HARECACHE)/tests_25_promotion.ssa: $(tests_25_promotion_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -361,7 +361,7 @@ $(HARECACHE)/tests_25_promotion.ssa: $(tests_25_promotion_ha) $(HARECACHE)/rt.td
 
 tests/26-regression: $(HARECACHE)/rt.o $(HARECACHE)/tests_26_regression.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_26_regression.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_26_regression.o
 
 tests_26_regression_ha = tests/26-regression.ha
 $(HARECACHE)/tests_26_regression.ssa: $(tests_26_regression_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -372,7 +372,7 @@ $(HARECACHE)/tests_26_regression.ssa: $(tests_26_regression_ha) $(HARECACHE)/rt.
 
 tests/27-rt: $(HARECACHE)/rt.o $(HARECACHE)/tests_27_rt.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_27_rt.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_27_rt.o
 
 tests_27_rt_ha = tests/27-rt.ha
 $(HARECACHE)/tests_27_rt.ssa: $(tests_27_rt_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -383,7 +383,7 @@ $(HARECACHE)/tests_27_rt.ssa: $(tests_27_rt_ha) $(HARECACHE)/rt.td $(BINOUT)/har
 
 tests/28-insert: $(HARECACHE)/rt.o $(HARECACHE)/tests_28_insert.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_28_insert.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_28_insert.o
 
 tests_28_insert_ha = tests/28-insert.ha
 $(HARECACHE)/tests_28_insert.ssa: $(tests_28_insert_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -394,7 +394,7 @@ $(HARECACHE)/tests_28_insert.ssa: $(tests_28_insert_ha) $(HARECACHE)/rt.td $(BIN
 
 tests/29-unarithm: $(HARECACHE)/rt.o $(HARECACHE)/tests_29_unarithm.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_29_unarithm.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_29_unarithm.o
 
 tests_29_unarithm_ha = tests/29-unarithm.ha
 $(HARECACHE)/tests_29_unarithm.ssa: $(tests_29_unarithm_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -405,7 +405,7 @@ $(HARECACHE)/tests_29_unarithm.ssa: $(tests_29_unarithm_ha) $(HARECACHE)/rt.td $
 
 tests/30-reduction: $(HARECACHE)/rt.o $(HARECACHE)/tests_30_reduction.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_30_reduction.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_30_reduction.o
 
 tests_30_reduction_ha = tests/30-reduction.ha
 $(HARECACHE)/tests_30_reduction.ssa: $(tests_30_reduction_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -416,7 +416,7 @@ $(HARECACHE)/tests_30_reduction.ssa: $(tests_30_reduction_ha) $(HARECACHE)/rt.td
 
 tests/31-postfix: $(HARECACHE)/rt.o $(HARECACHE)/tests_31_postfix.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_31_postfix.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_31_postfix.o
 
 tests_31_postfix_ha = tests/31-postfix.ha
 $(HARECACHE)/tests_31_postfix.ssa: $(tests_31_postfix_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -427,7 +427,7 @@ $(HARECACHE)/tests_31_postfix.ssa: $(tests_31_postfix_ha) $(HARECACHE)/rt.td $(B
 
 tests/32-copy: $(HARECACHE)/rt.o $(HARECACHE)/tests_32_copy.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_32_copy.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_32_copy.o
 
 tests_32_copy_ha = tests/32-copy.ha
 $(HARECACHE)/tests_32_copy.ssa: $(tests_32_copy_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -438,7 +438,7 @@ $(HARECACHE)/tests_32_copy.ssa: $(tests_32_copy_ha) $(HARECACHE)/rt.td $(BINOUT)
 
 tests/33-yield: $(HARECACHE)/rt.o $(HARECACHE)/tests_33_yield.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_33_yield.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_33_yield.o
 
 tests_33_yield_ha = tests/33-yield.ha
 $(HARECACHE)/tests_33_yield.ssa: $(tests_33_yield_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -449,7 +449,7 @@ $(HARECACHE)/tests_33_yield.ssa: $(tests_33_yield_ha) $(HARECACHE)/rt.td $(BINOU
 
 tests/34-declarations: $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_34_declarations.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_34_declarations.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/testmod.o $(HARECACHE)/tests_34_declarations.o
 
 tests_34_declarations_ha = tests/34-declarations.ha
 $(HARECACHE)/tests_34_declarations.ssa: $(tests_34_declarations_ha) $(HARECACHE)/rt.td $(HARECACHE)/testmod.td $(BINOUT)/harec
@@ -460,7 +460,7 @@ $(HARECACHE)/tests_34_declarations.ssa: $(tests_34_declarations_ha) $(HARECACHE)
 
 tests/35-floats: $(HARECACHE)/rt.o $(HARECACHE)/tests_35_floats.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_35_floats.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_35_floats.o
 
 tests_35_floats_ha = tests/35-floats.ha
 $(HARECACHE)/tests_35_floats.ssa: $(tests_35_floats_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -471,7 +471,7 @@ $(HARECACHE)/tests_35_floats.ssa: $(tests_35_floats_ha) $(HARECACHE)/rt.td $(BIN
 
 tests/36-defines: $(HARECACHE)/rt.o $(HARECACHE)/tests_36_defines.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_36_defines.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_36_defines.o
 
 tests_36_defines_ha = tests/36-defines.ha
 $(HARECACHE)/tests_36_defines.ssa: $(tests_36_defines_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -482,7 +482,7 @@ $(HARECACHE)/tests_36_defines.ssa: $(tests_36_defines_ha) $(HARECACHE)/rt.td $(B
 
 tests/37-annotations: $(HARECACHE)/rt.o $(HARECACHE)/tests_37_annotations.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_37_annotations.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_37_annotations.o
 
 tests_37_annotations_ha = tests/37-annotations.ha
 $(HARECACHE)/tests_37_annotations.ssa: $(tests_37_annotations_ha) $(HARECACHE)/rt.td $(BINOUT)/harec
@@ -493,7 +493,7 @@ $(HARECACHE)/tests_37_annotations.ssa: $(tests_37_annotations_ha) $(HARECACHE)/r
 
 tests/38-if_let: $(HARECACHE)/rt.o $(HARECACHE)/tests_38_if_let.o
 	@printf 'LD\t%s\t\n' '$@'
-	@$(LD) $(LDLINKFLAGS) -T rt/hare.sc -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_38_if_let.o
+	@$(LD) $(LDLINKFLAGS) $(LDSCRIPT) -o $@ $(HARECACHE)/rt.o $(HARECACHE)/tests_38_if_let.o
 
 tests_38_if_let_ha = tests/38-if_let.ha
 $(HARECACHE)/tests_38_if_let.ssa: $(tests_38_if_let_ha) $(HARECACHE)/rt.td $(BINOUT)/harec

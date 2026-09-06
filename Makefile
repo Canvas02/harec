@@ -4,13 +4,15 @@ all:
 
 include config.mk
 include makefiles/$(PLATFORM).mk
+LDSCRIPT ?= -T rt/hare.sc
 include makefiles/tests.mk
 
 all: $(BINOUT)/harec
 
 C_DEFINES = \
 	-DVERSION='"'"$(VERSION)"'"' \
-	-DDEFAULT_TARGET='"$(DEFAULT_TARGET)"'
+	-DDEFAULT_TARGET='"$(DEFAULT_TARGET)"' \
+	-DDEFAULT_PLATFORM='"$(PLATFORM)"'
 
 headers = \
 	include/arch.h \

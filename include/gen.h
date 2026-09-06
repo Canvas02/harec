@@ -64,6 +64,7 @@ struct rt {
 
 struct gen_context {
 	struct qbe_program *out;
+	enum target_format format;
 	struct gen_arch arch;
 	const struct ident *ns;
 	struct rt rt;

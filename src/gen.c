@@ -3666,8 +3666,13 @@ gen_function_decl(struct gen_context *ctx, const struct declaration *decl)
 		init->kind = Q_DATA;
 		init->exported = false;
 		init->data.align = 8;
-		init->data.section = ".data.hare_init_array";
-		init->data.secflags = NULL;
+		if (ctx->format == FORMAT_MACHO) {
+			init->data.section = "__DATA";
+			init->data.secflags = "__hare_init";
+		} else {
+			init->data.section = ".data.hare_init_array";
+			init->data.secflags = NULL;
+		}
 
 		size_t n = snprintf(NULL, 0, ".init.%s", qdef->name);
 		char *s = xcalloc(n + 1, 1);
@@ -3693,8 +3698,13 @@ gen_function_decl(struct gen_context *ctx, const struct declaration *decl)
 		fini->kind = Q_DATA;
 		fini->exported = false;
 		fini->data.align = 8;
-		fini->data.section = ".data.hare_fini_array";
-		fini->data.secflags = NULL;
+		if (ctx->format == FORMAT_MACHO) {
+			fini->data.section = "__DATA";
+			fini->data.secflags = "__hare_fini";
+		} else {
+			fini->data.section = ".data.hare_fini_array";
+			fini->data.secflags = NULL;
+		}
 
 		size_t n = snprintf(NULL, 0, ".fini.%s", qdef->name);
 		char *s = xcalloc(n + 1, 1);
@@ -3720,8 +3730,13 @@ gen_function_decl(struct gen_context *ctx, const struct declaration *decl)
 		test->kind = Q_DATA;
 		test->exported = false;
 		test->data.align = 8;
-		test->data.section = ".data.hare_test_array";
-		test->data.secflags = "aw";
+		if (ctx->format == FORMAT_MACHO) {
+			test->data.section = "__DATA";
+			test->data.secflags = "__hare_test";
+		} else {
+			test->data.section = ".data.hare_test_array";
+			test->data.secflags = "aw";
+		}
 
 		size_t n = snprintf(NULL, 0, ".test.%s", qdef->name);
 		char *s = xcalloc(n + 1, 1);
@@ -4114,6 +4129,7 @@ gen(const struct unit *unit, struct qbe_program *out, enum arch target, struct i
 {
 	struct gen_context ctx = {
 		.out = out,
+		.format = out->format,
 		.ns = unit->ns,
 		.itbl = itbl,
 		.arch = gen_arch_init(target),

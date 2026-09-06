@@ -198,11 +198,15 @@ emit_stmt(const struct qbe_statement *stmt, FILE *out)
 }
 
 static void
-emit_func(const struct qbe_def *def, FILE *out)
+emit_func(const struct qbe_def *def, enum target_format format, FILE *out)
 {
 	assert(def->kind == Q_FUNC);
-	xfprintf(out, "section \".text.%s\" \"ax\"%s\nfunction", def->name,
-			def->exported ? " export" : "");
+	if (format == FORMAT_MACHO) {
+		xfprintf(out, "%s\nfunction", def->exported ? "export " : "");
+	} else {
+		xfprintf(out, "section \".text.%s\" \"ax\"%s\nfunction", def->name,
+				def->exported ? " export" : "");
+	}
 	if (def->func.returns->stype != Q__VOID) {
 		xfprintf(out, " ");
 		emit_qtype(def->func.returns, true, true, out);
@@ -304,27 +308,43 @@ is_zeroes(const struct qbe_data_item *data)
 }
 
 static void
-emit_data(const struct qbe_def *def, FILE *out)
+emit_data(const struct qbe_def *def, enum target_format format, FILE *out)
 {
 	assert(def->kind == Q_DATA);
-	if (def->data.section && def->data.secflags) {
-		xfprintf(out, "section \"%s\" \"%s\"",
-				def->data.section, def->data.secflags);
-	} else if (def->data.section) {
-		xfprintf(out, "section \"%s\"", def->data.section);
-	} else if (def->data.threadlocal) {
-		if (is_zeroes(&def->data.items)) {
-			xfprintf(out, "section \".tbss\" \"awT\"");
-		} else {
-			xfprintf(out, "section \".tdata\" \"awT\"");
+	if (format == FORMAT_MACHO) {
+		if (def->data.section && def->data.secflags) {
+			xfprintf(out, "section \"%s\" \"%s\"\n",
+					def->data.section, def->data.secflags);
+		} else if (def->data.section) {
+			xfprintf(out, "section \"%s\"\n", def->data.section);
 		}
-	} else if (is_zeroes(&def->data.items)) {
-		xfprintf(out, "section \".bss.%s\"", def->name);
+		if (def->data.threadlocal) {
+			xfprintf(out, "%s\nthread data $%s = ",
+					def->exported ? "export " : "", def->name);
+		} else {
+			xfprintf(out, "%s\ndata $%s = ",
+					def->exported ? "export " : "", def->name);
+		}
 	} else {
-		xfprintf(out, "section \".data.%s\"", def->name);
+		if (def->data.section && def->data.secflags) {
+			xfprintf(out, "section \"%s\" \"%s\"",
+					def->data.section, def->data.secflags);
+		} else if (def->data.section) {
+			xfprintf(out, "section \"%s\"", def->data.section);
+		} else if (def->data.threadlocal) {
+			if (is_zeroes(&def->data.items)) {
+				xfprintf(out, "section \".tbss\" \"awT\"");
+			} else {
+				xfprintf(out, "section \".tdata\" \"awT\"");
+			}
+		} else if (is_zeroes(&def->data.items)) {
+			xfprintf(out, "section \".bss.%s\"", def->name);
+		} else {
+			xfprintf(out, "section \".data.%s\"", def->name);
+		}
+		xfprintf(out, "%s\ndata $%s = ", def->exported ? " export" : "",
+				def->name);
 	}
-	xfprintf(out, "%s\ndata $%s = ", def->exported ? " export" : "",
-			def->name);
 	if (def->data.align != ALIGN_UNDEFINED) {
 		xfprintf(out, "align %" PRIu8 " ", def->data.align);
 	}
@@ -358,7 +378,7 @@ emit_data(const struct qbe_def *def, FILE *out)
 }
 
 static void
-emit_def(const struct qbe_def *def, FILE *out)
+emit_def(const struct qbe_def *def, enum target_format format, FILE *out)
 {
 	xfprintf(out, "dbgfile \"%s\"\n", full_sources[def->file]);
 	switch (def->kind) {
@@ -366,10 +386,10 @@ emit_def(const struct qbe_def *def, FILE *out)
 		qemit_type(def, out);
 		break;
 	case Q_FUNC:
-		emit_func(def, out);
+		emit_func(def, format, out);
 		break;
 	case Q_DATA:
-		emit_data(def, out);
+		emit_data(def, format, out);
 		break;
 	}
 }
@@ -379,7 +399,7 @@ emit(const struct qbe_program *program, FILE *out)
 {
 	const struct qbe_def *def = program->defs;
 	while (def) {
-		emit_def(def, out);
+		emit_def(def, program->format, out);
 		def = def->next;
 	}
 }

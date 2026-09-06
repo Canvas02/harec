@@ -263,7 +263,13 @@ struct qbe_def {
 	struct qbe_def *next;
 };
 
+enum target_format {
+	FORMAT_ELF,
+	FORMAT_MACHO,
+};
+
 struct qbe_program {
+	enum target_format format;
 	struct qbe_def *defs;
 	struct qbe_def **next;
 };

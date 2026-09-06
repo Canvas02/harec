@@ -16,6 +16,10 @@
 #include "typedef.h"
 #include "util.h"
 
+#ifndef DEFAULT_PLATFORM
+#define DEFAULT_PLATFORM ""
+#endif
+
 static void
 usage(const char *argv_0)
 {
@@ -144,14 +148,26 @@ main(int argc, char *argv[])
 		}
 	}
 
+	enum target_format format = FORMAT_ELF;
+	if (strcmp(DEFAULT_PLATFORM, "darwin") == 0 || strcmp(DEFAULT_PLATFORM, "macos") == 0) {
+		format = FORMAT_MACHO;
+	}
+	if (strstr(targetstr, "apple") != NULL || strstr(targetstr, "darwin") != NULL) {
+		format = FORMAT_MACHO;
+	}
+
 	enum arch target;
-	if (strcmp(targetstr, "aarch64") == 0) {
+	if (strcmp(targetstr, "aarch64") == 0 || strcmp(targetstr, "arm64") == 0
+			|| strcmp(targetstr, "arm64_apple") == 0 || strcmp(targetstr, "aarch64_apple") == 0
+			|| strcmp(targetstr, "aarch64-darwin") == 0 || strcmp(targetstr, "arm64-darwin") == 0) {
 		target = AARCH64;
 	} else if (strcmp(targetstr, "ppc64le") == 0) {
 		target = PPC64LE;
 	} else if (strcmp(targetstr, "riscv64") == 0) {
 		target = RISCV64;
-	} else if (strcmp(targetstr, "x86_64") == 0) {
+	} else if (strcmp(targetstr, "x86_64") == 0 || strcmp(targetstr, "amd64") == 0
+			|| strcmp(targetstr, "amd64_apple") == 0 || strcmp(targetstr, "x86_64_apple") == 0
+			|| strcmp(targetstr, "x86_64-darwin") == 0 || strcmp(targetstr, "amd64-darwin") == 0) {
 		target = X86_64;
 	} else {
 		xfprintf(stderr, "Unsupported or unrecognized target: %s\n",
@@ -234,7 +250,9 @@ main(int argc, char *argv[])
 		fclose(out);
 	}
 
-	struct qbe_program prog = {0};
+	struct qbe_program prog = {
+		.format = format,
+	};
 	gen(&unit, &prog, target, &itbl);
 
 	FILE *out;
